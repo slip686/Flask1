@@ -122,27 +122,37 @@ def delete(quote_id):
 @app.route("/quotes/filter")
 def get_quote_with_filter():
     args = request.args
+    author = args.get("author")
+    rating = args.get("rating")
     result = []
+
     if args.get("rating_range"):
         rating_range = args["rating_range"].split(",")
         for quote in quotes:
             if quote["rating"] in range(int(rating_range[0]), int(rating_range[1])+1):
                 result.append(quote)
-        return result, 200
-    if args.get("id_range"):
+    elif args.get("id_range"):
         id_range = args["id_range"].split(",")
         for quote in quotes:
             if quote["id"] in range(int(id_range[0]), int(id_range[1])+1):
                 result.append(quote)
+    else:
+        if None not in (author, rating):
+            for quote in quotes:
+                if quote["author"] == author and quote["rating"] == int(rating):
+                    result.append(quote)
+
+        elif author is not None:
+            for quote in quotes:
+                if quote["author"] == author:
+                    result.append(quote)
+
+        elif rating is not None:
+            for quote in quotes:
+                if quote["rating"] == int(rating):
+                    result.append(quote)
+    if result:
         return result, 200
-
-
-    # result = []
-    # for quote in quotes:
-    #     if args.get("author"):
-    #         if quote["author"] == args.get("author"):
-    #             result.append(quote)
-    #     if args.get("rating"):
-
-
+    else:
+        return f"Quotes not found", 404
 
