@@ -3,11 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from pathlib import Path
 
+
 BASE_DIR = Path(__file__).parent
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{BASE_DIR / 'main.db'}"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://slip686:ddtlbnt yjdsq@sliplab.net:5432/quotes"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.app_context().push()
 
