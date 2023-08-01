@@ -142,7 +142,7 @@ def get_one_author_quotes(author_id):
     if quotes:
         return quotes, 200
     else:
-        return f"No quotes for author with id={author_obj.id}", 404
+        return f"No quotes for author with id={author_obj.id} found", 404
 
 
 @app.route("/authors/<int:author_id>/quotes", methods=["POST"])
@@ -182,3 +182,7 @@ def delete_quote_by_id(quote_id):
         return f"Quote with id={quote_id} has been deleted", 200
     else:
         return f"Quote with id={quote_id} not found", 404
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
