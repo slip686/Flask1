@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).parent
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://slip686:ddtlbnt yjdsq@host.docker.internal:5432/quotes"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://slip686:ddtlbnt yjdsq@srv-captain--exon-db:5432/exon"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.app_context().push()
 
