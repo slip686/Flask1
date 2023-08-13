@@ -208,8 +208,3 @@ def delete_quote_by_id(quote_id):
         return f"Quote with id={quote_id} has been deleted", 200
     else:
         return f"Quote with id={quote_id} not found", 404
-
-
-@app.route("/quotes/filter")
-def get_quote_with_filter():
-
