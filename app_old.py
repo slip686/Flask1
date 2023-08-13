@@ -1,4 +1,4 @@
-from flask import Flask, abort, request, jsonify
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from pathlib import Path
@@ -55,14 +55,21 @@ class QuoteModel(db.Model):
 
 @app.route("/authors")
 def get_all_authors():
-    authors: list[AuthorModel] = AuthorModel.query.all()
-    authors_dict: list[dict] = []
+    authors = None
+    authors_list: list[dict] = []
+    name = request.args.get("by_name")
+    surname = request.args.get("by_surname")
+    if name:
+        authors = AuthorModel.query.filter_by(name=name).all()
+    if surname:
+        authors = AuthorModel.query.filter_by(surname=surname).all()
+    if not name and surname:
+        authors = AuthorModel.query.all()
     for author in authors:
-        authors_dict.append(author.to_dict())
-    if authors_dict:
-        return authors_dict, 200
-    else:
-        return "No authors added", 404
+        authors_list.append(author.to_dict())
+    if authors_list:
+        return authors_list, 200
+    return "No authors yet", 404
 
 
 @app.route("/authors/<int:author_id>")
@@ -92,19 +99,11 @@ def add_new_author():
 def edit_author_by_id(author_id):
     author_obj: AuthorModel = AuthorModel.query.get(author_id)
     if author_obj:
-        if request.json.get("name"):
-            new_name = request.json["name"]
-            author_obj.name = new_name
-        if request.json.get("surname"):
-            new_surname = request.json["surname"]
-            author_obj.surname = new_surname
-        if request.json.get("name") or request.json.get("surname"):
-            db.session.commit()
-            return {"id": author_obj.id, "name": author_obj.name, "surname": author_obj.surname}, 200
-        else:
-            return "Bad request", 400
-    else:
-        return f"Author with id={author_id} not found", 404
+        for key, value in request.json:
+            setattr(author_obj, key, value)
+        db.session.commit()
+        return author_obj.to_dict(), 200
+    return f"Author with id={author_id} not found", 404
 
 
 @app.route("/authors/<int:author_id>", methods=["DELETE"])
@@ -209,3 +208,8 @@ def delete_quote_by_id(quote_id):
         return f"Quote with id={quote_id} has been deleted", 200
     else:
         return f"Quote with id={quote_id} not found", 404
+
+
+@app.route("/quotes/filter")
+def get_quote_with_filter():
+
